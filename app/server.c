@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <unistd.h>
 
+#define BUFF_SIZE 256
+
 int main() {
 	// Disable output buffering
 	setbuf(stdout, NULL);
@@ -60,9 +62,10 @@ int main() {
 	 int bytes_sent;
 	 //int bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 // taking a char array to receive the GET request in
-	 char buffer[256] = {0};
-	 recv(client_fd, buffer, 256, 0);
+	 char buffer[BUFF_SIZE] = {0};
+	 recv(client_fd, buffer, BUFF_SIZE, 0);
 
+	 char *token = strsep(&buffer, " ");
 	// if the 5th char is empty then we send 200 else we send 404 not found
 	 if (buffer[5] != ' ')
 	 {
