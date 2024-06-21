@@ -58,7 +58,17 @@ int main() {
 	// We take a string literal "HTTP/1.1 200 OK\r\n\r\n"
 	 char *reply = "HTTP/1.1 200 OK\r\n\r\n";
 	 int bytes_sent = send(client_fd, reply, strlen(reply), 0);
-	 
+	 char buffer[256] = {0};
+	 recv(client_fd, buffer, 256, 0);
+	 if (buffer[6] != ' ')
+	 {
+		char *r = "HTTP/1.1 404 Not Found\r\n\r\n";
+		bytes_sent = send(client_fd, r, strlen(r), 0);
+	 }
+	 else
+	 {
+		bytes_sent = send(client_fd, reply, strlen(reply), 0);
+	 }
 	 close(server_fd);
 
 	return 0;
