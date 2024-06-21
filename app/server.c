@@ -62,7 +62,7 @@ int main() {
 	 char buffer[256] = {0};
 	 recv(client_fd, buffer, 256, 0);
 	 char *f = buffer + 5;
-
+	 printf("%s", buffer);
 	 if (buffer[5] != '/')
 	 {
 		char *r = "HTTP/1.1 404 Not Found\r\n\r\n";
