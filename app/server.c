@@ -72,12 +72,13 @@ int main() {
 	 //if (buffer[5] != ' ')
 	 if (strcmp(path, "/") == 0)
 	 {
-		char *r = "HTTP/1.1 404 Not Found\r\n\r\n";
-		bytes_sent = send(client_fd, r, strlen(r), 0); 
+		
+		bytes_sent = send(client_fd, reply, strlen(reply), 0); 
 		
 	 }
 	 else
 	 {
+		reply = "HTTP/1.1 404 Not Found\r\n\r\n";
 		bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 }
 	 
