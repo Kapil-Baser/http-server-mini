@@ -66,7 +66,9 @@ int main() {
 	 char buffer[BUFF_SIZE] = {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 
-	 
+	 char *token = strtok(buffer, " ");
+	 token = strtok(NULL, " ");
+	 printf("%s", token);
 	// if the 5th char is empty then we send 200 else we send 404 not found
 	 if (buffer[5] != ' ')
 	 {
