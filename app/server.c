@@ -61,7 +61,7 @@ int main() {
 	 //int bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 char buffer[256] = {0};
 	 recv(client_fd, buffer, 256, 0);
-	 if (buffer[6] != '/')
+	 if (buffer[6] == '/')
 	 {
 		char *r = "HTTP/1.1 404 Not Found\r\n\r\n";
 		bytes_sent = send(client_fd, r, strlen(r), 0);
