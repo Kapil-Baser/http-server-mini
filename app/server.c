@@ -59,6 +59,7 @@ int main() {
 	 printf("Client connected\n");
 	// We take a string literal "HTTP/1.1 200 OK\r\n\r\n"
 	 char *reply = "HTTP/1.1 200 OK\r\n\r\n";
+	 char *replay_bad = "HTTP/1.1 404 Not Found\r\n\r\n";
 	 int bytes_sent;
 	 //int bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 // taking a char array to receive the GET request in
@@ -67,14 +68,12 @@ int main() {
 
 	 
 	// if the 5th char is empty then we send 200 else we send 404 not found
-	 if (buffer[5] == ' ')
+	 if (buffer[5] != ' ')
 	 {
-		bytes_sent = send(client_fd, reply, strlen(reply), 0); 
-		
+		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0); 	
 	 }
 	 else
 	 {
-		reply = "HTTP/1.1 404 Not Found\r\n\r\n";
 		bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 }
 	 
