@@ -66,13 +66,9 @@ int main() {
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 
 	 
-	 char *path = strtok(buffer, " ");
-	 //path = strtok(NULL, " ");
 	// if the 5th char is empty then we send 200 else we send 404 not found
-	 //if (buffer[5] != ' ')
-	 if (strcmp(path, "/") == 0)
+	 if (buffer[5] != ' ')
 	 {
-		
 		bytes_sent = send(client_fd, reply, strlen(reply), 0); 
 		
 	 }
