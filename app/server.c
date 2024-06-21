@@ -66,12 +66,17 @@ int main() {
 	 char buffer[BUFF_SIZE] = {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 
+
+	 char *con_type = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
+	 char con_len[] = "3\r\n\r\n";
 	 char *token = strtok(buffer, " ");
 	 token = strtok(NULL, " ");
+	 char *final = token + 6;
+	 size_t len = strlen(final);
 	 char *st = strstr(token, "echo");
 	 if (st != NULL)
 	 {
-		bytes_sent = send(client_fd, reply, strlen(reply), 0);
+		bytes_sent = send(client_fd, con_type, strlen(con_type), 0);
 	 }
 	 printf("%s", token);
 	// if the 5th char is empty then we send 200 else we send 404 not found
