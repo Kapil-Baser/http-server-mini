@@ -68,7 +68,8 @@ int main() {
 	 char *token = strdup(buffer);
 	 char *path = strsep(&token, " ");
 	// if the 5th char is empty then we send 200 else we send 404 not found
-	 if (buffer[5] != ' ')
+	 //if (buffer[5] != ' ')
+	 if (strcmp(path, "/") == 0)
 	 {
 		char *r = "HTTP/1.1 404 Not Found\r\n\r\n";
 		bytes_sent = send(client_fd, r, strlen(r), 0); 
