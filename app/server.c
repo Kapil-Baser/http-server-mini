@@ -56,8 +56,8 @@ int main() {
 	 int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	 printf("Client connected\n");
 	// We take a string literal "HTTP/1.1 200 OK\r\n\r\n"
-	 char *reply = "HTTP/1.1 200 OK\r\n\r\n";
-	 int bytes_sent = send(client_fd, reply, strlen(reply), 0);
+	 //char *reply = "HTTP/1.1 200 OK\r\n\r\n";
+	 //int bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 char buffer[256] = {0};
 	 recv(client_fd, buffer, 256, 0);
 	 if (buffer[6] != '/')
