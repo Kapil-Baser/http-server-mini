@@ -67,6 +67,7 @@ int main() {
 
 	 char *token = strdup(buffer);
 	 char *path = strsep(&token, " ");
+	 path = strsep(&buffer, " ");
 	// if the 5th char is empty then we send 200 else we send 404 not found
 	 //if (buffer[5] != ' ')
 	 if (strcmp(path, "/") == 0)
