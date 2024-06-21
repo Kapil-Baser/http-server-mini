@@ -68,6 +68,11 @@ int main() {
 
 	 char *token = strtok(buffer, " ");
 	 token = strtok(NULL, " ");
+	 char *st = strstr(token, "echo");
+	 if (st != NULL)
+	 {
+		bytes_sent = send(client_fd, reply, strlen(reply), 0);
+	 }
 	 printf("%s", token);
 	// if the 5th char is empty then we send 200 else we send 404 not found
 	 if (buffer[5] != ' ')
