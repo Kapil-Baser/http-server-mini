@@ -73,11 +73,14 @@ int main() {
 	 token = strtok(NULL, " ");
 	 char *final = token + 6;
 	 size_t len = strlen(final);
+	 char str[256] = {0};
 	 char *st = strstr(token, "echo");
 	 if (st != NULL)
 	 {
+		strcpy(st, con_type);
+		strcat(st, (unsigned char)&len);
 		bytes_sent = send(client_fd, con_type, strlen(con_type), 0);
-		bytes_sent = send(client_fd, (unsigned char)len, 1, 0);
+		
 	 }
 	 printf("%s", token);
 	// if the 5th char is empty then we send 200 else we send 404 not found
