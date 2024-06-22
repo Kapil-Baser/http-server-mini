@@ -75,12 +75,12 @@ int main() {
 	 {
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
 	 }
-	 else if (strncmp(url, "/echo/", 6))
+	 else if (strncmp(url, "/echo/", 6) == 0)
 	 {
 		char *echo = url + 6;
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
 	 }
-	 else if (strncmp(url, "/user-agent", 11))
+	 else if (strncmp(url, "/user-agent", 11) == 0)
 	 {
 		char *user_agent = strstr(buf, "User-Agent:");
 		if (user_agent != NULL)
