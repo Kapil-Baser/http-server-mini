@@ -76,7 +76,7 @@ int main() {
 	 {
 		bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 }
-	 if (strlen(token, "/echo") == 0)
+	 if (strcmp(token, "/echo") == 0)
 	 {
 		size_t length = strlen(content);
 		char response[512];
