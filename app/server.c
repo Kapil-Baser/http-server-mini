@@ -86,9 +86,9 @@ int main() {
 		printf("%s", response);
 		bytes_sent = send(client_fd, response, strlen(response), 0);
 	 }
-	 if (strncmp(reqpath, "/user-agent/", 12) == 0)
+	 if (strncmp(reqpath, "/user-agent", 11) == 0)
 	 {
-		char *s = reqpath + 12;
+		char *s = reqpath + 11;
 		printf("Status - %s", s);
 	 }
 	 else
