@@ -61,6 +61,9 @@ int main() {
 	 // reading the message
 	 int read_bytes = read(client_fd, buf, 1024);
 	 printf("msg read - %s\n", buf);
+	 char method[256], url[512], protocall[256];
+	 sscanf(buf, "%s %s %s", method, url, protocall);
+	 printf("URL %s", url);
 	// We take a string literal "HTTP/1.1 200 OK\r\n\r\n"
 	 char *reply = "HTTP/1.1 200 OK\r\n\r\n";
 	 char *replay_bad = "HTTP/1.1 404 Not Found\r\n\r\n";
