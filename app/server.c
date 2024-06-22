@@ -65,34 +65,35 @@ int main() {
 	 // taking a char array to receive the GET request in
 	 char buffer[BUFF_SIZE] = {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
-
-
-	 char *con_type = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
-	 char con_len[] = "3\r\n\r\n";
 	 char *token = strtok(buffer, " ");
 	 token = strtok(NULL, " ");
-	 char *final = token + 6;
-	 size_t len = strlen(final);
-	 char str[256] = {0};
-	 char *st = strstr(token, "echo");
-	 if (st != NULL)
+	 char *reqpath = strdup(buffer);
+
+     char *main_path = strtok(reqpath, "/");
+	 char *content = strtok(NULL, "");
+
+	 if (strcmp(token, "/") == 0)
 	 {
-		strcpy(st, con_type);
-		strcat(st, (unsigned char)&len);
-		bytes_sent = send(client_fd, con_type, strlen(con_type), 0);
-		
+		bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 }
-	 printf("%s", token);
+	 if (strlen(token, "/echo") == 0)
+	 {
+		size_t length = strlen(content);
+		char response[512];
+		sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", length, main_path);
+		bytes_sent = send(client_fd, response, strlen(response), 0);
+	 }
+
 	// if the 5th char is empty then we send 200 else we send 404 not found
-	 if (buffer[5] != ' ')
+	 /*if (buffer[5] != ' ')
 	 {
 		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0); 	
 	 }
 	 else
 	 {
 		bytes_sent = send(client_fd, reply, strlen(reply), 0);
-	 }
-	 
+	 }*/
+	 close(client_fd);
 	 close(server_fd);
 
 	return 0;
