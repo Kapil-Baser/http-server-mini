@@ -66,7 +66,6 @@ int main() {
 	 char buffer[BUFF_SIZE]; //= {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 	 char *token = strtok(buffer, " ");
-	 printf("Whole buffer-%s\n", buffer);
 	 token = strtok(NULL, " ");
 	 printf("%s", token);
 	 char *reqpath = strdup(token);
@@ -87,9 +86,10 @@ int main() {
 		printf("%s", response);
 		bytes_sent = send(client_fd, response, strlen(response), 0);
 	 }
-	 if (strcmp(reqpath, "/user-agent") == 0)
+	 if (strncmp(reqpath, "/user-agent/", 12) == 0)
 	 {
-		printf("Status");
+		char *s = reqpath + 12;
+		printf("Status - %s", s);
 	 }
 	 else
 	 {
