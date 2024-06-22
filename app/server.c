@@ -7,7 +7,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-#define BUFF_SIZE 256
+#define BUFF_SIZE 1024
 
 int main() {
 	// Disable output buffering
@@ -57,20 +57,39 @@ int main() {
 	//
 	 int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	 printf("Client connected\n");
-     char buf[1024];
+
+     char buf[BUFF_SIZE];
 	 // reading the message
-	 int read_bytes = read(client_fd, buf, 1024);
+	 int read_bytes = read(client_fd, buf, BUFF_SIZE);
 	 printf("msg read - %s\n", buf);
-	 char method[256], url[512], protocall[256];
-	 sscanf(buf, "%s %s %s", method, url, protocall);
+
+	 char method[16], url[512], protocol[16];
+	 sscanf(buf, "%s %s %s", method, url, protocol);
 	 printf("URL %s", url);
 	// We take a string literal "HTTP/1.1 200 OK\r\n\r\n"
 	 char *reply = "HTTP/1.1 200 OK\r\n\r\n";
 	 char *replay_bad = "HTTP/1.1 404 Not Found\r\n\r\n";
 	 int bytes_sent;
-	 //int bytes_sent = send(client_fd, reply, strlen(reply), 0);
+	 char response[BUFF_SIZE] = {0};
+	 if (strcmp(url, "/") == 0)
+	 {
+		snprintf(respone, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
+	 }
+	 else if (strncmp(url, "/echo/", 6))
+	 {
+		char *echo = url + 6;
+		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
+	 }
+	 else if (strncmp(url, "/user-agent", 11))
+	 {
+		char *user_agent = strstr(buf, "User-Agent:");
+		if (user_agent != NULL)
+		{
+			printf("User agent- %s", user_agent);
+		}
+	 }
 	 // taking a char array to receive the GET request in
-	 char buffer[BUFF_SIZE]; //= {0};
+	 /*char buffer[BUFF_SIZE]; //= {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 	 char *token = strtok(buffer, " ");
 	 token = strtok(NULL, " ");
@@ -101,7 +120,7 @@ int main() {
 	 else
 	 {
 		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0);
-	 }
+	 }*/
 	 close(client_fd);
 	 close(server_fd);
 
