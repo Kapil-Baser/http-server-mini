@@ -63,7 +63,7 @@ int main() {
 	 int bytes_sent;
 	 //int bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 // taking a char array to receive the GET request in
-	 char buffer[BUFF_SIZE] = {0};
+	 char buffer[BUFF_SIZE]; //= {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 	 char *token = strtok(buffer, " ");
 	 printf("Whole buffer-%s\n", buffer);
