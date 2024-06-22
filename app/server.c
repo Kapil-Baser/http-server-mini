@@ -87,7 +87,7 @@ int main() {
 		printf("%s", response);
 		bytes_sent = send(client_fd, response, strlen(response), 0);
 	 }
-	 if (strcmp(reqpath, "/user") == 0)
+	 if (strcmp(reqpath, "/user-agent") == 0)
 	 {
 		printf("Status");
 	 }
