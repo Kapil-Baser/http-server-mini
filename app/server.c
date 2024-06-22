@@ -68,6 +68,7 @@ int main() {
 	 char *token = strtok(buffer, " ");
 	 printf("%s", token);
 	 token = strtok(NULL, " ");
+	 printf("%s", token);
 	 char *reqpath = strdup(buffer);
 	 printf("%s", reqpath);
      char *main_path = strtok(reqpath, "/");
