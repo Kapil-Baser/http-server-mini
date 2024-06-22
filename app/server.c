@@ -66,9 +66,10 @@ int main() {
 	 char buffer[BUFF_SIZE] = {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 	 char *token = strtok(buffer, " ");
+	 printf("%s", token);
 	 token = strtok(NULL, " ");
 	 char *reqpath = strdup(buffer);
-
+	 printf("%s", reqpath);
      char *main_path = strtok(reqpath, "/");
 	 char *content = strtok(NULL, "");
 
