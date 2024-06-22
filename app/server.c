@@ -74,9 +74,9 @@ int main() {
 		pthread_t thread_id;
 		if (pthread_create(&thread_id, NULL, process_request, (void*)client_fd) < 0)
 		{
-			fprint(stderr, "Error: Could not create thread\n");
+			fprintf(stderr, "Error: Could not create thread\n");
 			free(client_fd);
-			close(client_fd);
+			close(*client_fd);
 			close(server_fd);
 		}
 		// detaching the thread
@@ -206,7 +206,7 @@ void *process_request(void *socket_fd)
 	}
 
 	// sending the processed request
-	bytes_sent = send(*client_fd, response, sterlen(response), 0);
+	bytes_sent = send(*client_fd, response, strlen(response), 0);
 
 	close(*client_fd);
 	return NULL;
