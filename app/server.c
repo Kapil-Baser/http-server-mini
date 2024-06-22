@@ -81,6 +81,7 @@ int main() {
 		size_t length = strlen(content);
 		char response[512];
 		sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", length, main_path);
+		printf("%s", response);
 		bytes_sent = send(client_fd, response, strlen(response), 0);
 	 }
 
