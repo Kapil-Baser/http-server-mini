@@ -175,7 +175,7 @@ void *process_request(void *socket_fd)
 	{
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n200 OK");
 	}
-	else if (strcmp(url, "/") == 0)
+	if (strcmp(url, "/") == 0)
 	{
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
 	}
