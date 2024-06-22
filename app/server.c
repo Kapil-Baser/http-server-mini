@@ -75,15 +75,15 @@ int main() {
 	 char *content = strtok(NULL, "");
      printf("main - %s", main_path);
 	 printf("content - %s", content);
-	 if (strcmp(token, "/") == 0)
+	 if (strcmp(reqpath, "/") == 0)
 	 {
 		bytes_sent = send(client_fd, reply, strlen(reply), 0);
 	 }
-	 if (strcmp(token, "/echo") == 0)
+	 if (strcmp(reqpath, "/echo") == 0)
 	 {
 		size_t length = strlen(content);
 		char response[512];
-		sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", length, main_path);
+		sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", length, content);
 		printf("%s", response);
 		bytes_sent = send(client_fd, response, strlen(response), 0);
 	 }
