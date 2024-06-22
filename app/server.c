@@ -85,9 +85,22 @@ int main() {
 		char *user_agent = strstr(buf, "User-Agent:");
 		if (user_agent != NULL)
 		{
-			printf("User agent- %s", user_agent);
+			user_agent += 12;
+			char *eol = strstr(user_agent, "\r\n");
+			*eol = '\0';
 		}
+		else
+		{
+			user_agent = "User-agent not found";
+		}
+		// sending user agent
+		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(user_agent), user_agent);
 	 }
+	 else
+	 {
+		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0);
+	 }
+	 bytes_sent = send(client_fd, response, strlen(response), 0);
 	 // taking a char array to receive the GET request in
 	 /*char buffer[BUFF_SIZE]; //= {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
