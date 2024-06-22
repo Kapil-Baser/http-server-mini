@@ -73,7 +73,8 @@ int main() {
 	 printf("%s", reqpath);
      char *main_path = strtok(reqpath, "/");
 	 char *content = strtok(NULL, "");
-
+     printf("%s", main_path);
+	 printf("%s", content);
 	 if (strcmp(token, "/") == 0)
 	 {
 		bytes_sent = send(client_fd, reply, strlen(reply), 0);
