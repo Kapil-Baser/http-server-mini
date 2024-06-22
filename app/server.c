@@ -6,8 +6,12 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <pthread.h>	// for concurrent connections to server
 
 #define BUFF_SIZE 1024
+
+// Function prototypes
+void *process_request(void *socket_fd);
 
 int main() {
 	// Disable output buffering
@@ -20,6 +24,7 @@ int main() {
 	// Uncomment this block to pass the first stage
 	
 	 int server_fd, client_addr_len;
+	 int *client_fd;
 	 struct sockaddr_in client_addr;
 	
 	 server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -52,13 +57,36 @@ int main() {
 	 	return 1;
 	 }
 	//
-	 printf("Waiting for a client to connect...\n");
-	 client_addr_len = sizeof(client_addr);
-	//
-	 int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
-	 printf("Client connected\n");
+	 while (1)
+	 {
+		printf("Waiting for a client to connect...\n");
+	 	client_addr_len = sizeof(client_addr);
 
-     char buf[BUFF_SIZE];
+		client_fd = malloc(sizeof(int));
+		if (client_fd == NULL)
+		{
+			fprintf(stderr, "Error: Allocating memory for client_fd failed\n");
+			return 1;
+		}
+		*client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
+	 	printf("Client connected\n");
+
+		pthread_t thread_id;
+		if (pthread_create(&thread_id, NULL, process_request, (void*)client_fd) < 0)
+		{
+			fprint(stderr, "Error: Could not create thread\n");
+			free(client_fd);
+			close(client_fd);
+			close(server_fd);
+		}
+		// detaching the thread
+		pthread_detach(thread_id);
+	 }
+	 
+	//
+	 
+
+     /*char buf[BUFF_SIZE];
 	 // reading the message
 	 int read_bytes = read(client_fd, buf, BUFF_SIZE);
 	 printf("msg read - %s\n", buf);
@@ -82,19 +110,7 @@ int main() {
 	 }
 	 else if (strncmp(url, "/user-agent", 11) == 0)
 	 {
-		char *user_agent = strstr(buf, "User-Agent:");
-		if (user_agent != NULL)
-		{
-			user_agent += 12;
-			char *eol = strstr(user_agent, "\r\n");
-			*eol = '\0';
-		}
-		else
-		{
-			user_agent = "User-agent not found";
-		}
-		// sending user agent
-		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(user_agent), user_agent);
+
 	 }
 	 else
 	 {
@@ -134,8 +150,64 @@ int main() {
 	 {
 		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0);
 	 }*/
-	 close(client_fd);
+	 //close(client_fd);
 	 close(server_fd);
 
 	return 0;
+}
+
+void *process_request(void *socket_fd)
+{
+	int *client_fd = socket_fd;
+
+	char buf[BUFF_SIZE];
+	// reading the message
+	int read_bytes = read(client_fd, buf, BUFF_SIZE);
+	printf("msg read - %s\n", buf);
+
+	// extracting method, url and protocol
+	char method[16], url[512], protocol[16];
+	sscanf(buf, "%s %s %s", method, url, protocol);
+
+	int bytes_sent;
+	char response[BUFF_SIZE] = {0};
+	if (strcmp(method, "GET") == 0)
+	{
+		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n200 OK");
+	}
+	else if (strcmp(url, "/") == 0)
+	{
+		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
+	}
+	else if (strncmp(url, "/echo/", 6) == 0)
+	{
+		char *echo = url + 6;
+		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
+	}
+	else if (strncmp(url, "/user-agent", 11) == 0)
+	{
+		char *user_agent = strstr(buf, "User-Agent:");
+		if (user_agent != NULL)
+		{
+			user_agent += 12;
+			char *eol = strstr(user_agent, "\r\n");
+			*eol = '\0';
+		}
+		else
+		{
+			user_agent = "User-agent not found";
+		}
+		// sending user agent
+		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(user_agent), user_agent);
+	}
+	else
+	{
+		snprintf(response, sizeof(response), "HTTP/1.1 404 Not Found\r\n\r\n\r\n");
+	}
+
+	// sending the processed request
+	bytes_sent = send(*client_fd, response, sterlen(response), 0);
+
+	close(*client_fd);
+	return NULL;
 }
