@@ -73,7 +73,7 @@ int main() {
 	 char response[BUFF_SIZE] = {0};
 	 if (strcmp(url, "/") == 0)
 	 {
-		snprintf(respone, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
+		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
 	 }
 	 else if (strncmp(url, "/echo/", 6))
 	 {
