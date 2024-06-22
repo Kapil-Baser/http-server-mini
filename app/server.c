@@ -66,15 +66,15 @@ int main() {
 	 char buffer[BUFF_SIZE] = {0};
 	 recv(client_fd, buffer, BUFF_SIZE, 0);
 	 char *token = strtok(buffer, " ");
-	 printf("%s", token);
+	 
 	 token = strtok(NULL, " ");
 	 printf("%s", token);
 	 char *reqpath = strdup(token);
-	 printf("%s", reqpath);
+	 printf("req path - %s\n", reqpath);
      char *main_path = strtok(reqpath, "/");
 	 char *content = strtok(NULL, "");
-     printf("%s", main_path);
-	 printf("%s", content);
+     printf("main - %s", main_path);
+	 printf("content - %s", content);
 	 if (strcmp(token, "/") == 0)
 	 {
 		bytes_sent = send(client_fd, reply, strlen(reply), 0);
