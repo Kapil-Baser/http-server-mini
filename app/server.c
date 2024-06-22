@@ -186,6 +186,7 @@ void *process_request(void *socket_fd)
 	}
 	else if (strncmp(url, "/user-agent", 11) == 0)
 	{
+		printf("In user agent\n");
 		char *user_agent = strstr(buf, "User-Agent:");
 		if (user_agent != NULL)
 		{
