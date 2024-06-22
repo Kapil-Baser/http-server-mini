@@ -57,6 +57,10 @@ int main() {
 	//
 	 int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	 printf("Client connected\n");
+     char buf[1024];
+	 // reading the message
+	 int read_bytes = read(client_fd, buf, 1024);
+	 printf("msg read - %s\n", buf);
 	// We take a string literal "HTTP/1.1 200 OK\r\n\r\n"
 	 char *reply = "HTTP/1.1 200 OK\r\n\r\n";
 	 char *replay_bad = "HTTP/1.1 404 Not Found\r\n\r\n";
