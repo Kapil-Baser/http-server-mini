@@ -168,7 +168,7 @@ void *process_request(void *socket_fd)
 	// extracting method, url and protocol
 	char method[16], url[512], protocol[16];
 	sscanf(buf, "%s %s %s", method, url, protocol);
-
+	printf("URL - %s\n", url);
 	int bytes_sent;
 	char response[BUFF_SIZE] = {0};
 	if (strcmp(method, "GET") == 0)
