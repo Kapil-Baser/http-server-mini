@@ -92,11 +92,11 @@ int main() {
 	 /*if (buffer[5] != ' ')
 	 {
 		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0); 	
-	 }
+	 }*/
 	 else
 	 {
-		bytes_sent = send(client_fd, reply, strlen(reply), 0);
-	 }*/
+		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0);
+	 }
 	 close(client_fd);
 	 close(server_fd);
 
