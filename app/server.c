@@ -87,12 +87,6 @@ int main() {
 		printf("%s", response);
 		bytes_sent = send(client_fd, response, strlen(response), 0);
 	 }
-
-	// if the 5th char is empty then we send 200 else we send 404 not found
-	 /*if (buffer[5] != ' ')
-	 {
-		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0); 	
-	 }*/
 	 else
 	 {
 		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0);
