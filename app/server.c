@@ -162,7 +162,7 @@ void *process_request(void *socket_fd)
 
 	char buf[BUFF_SIZE];
 	// reading the message
-	int read_bytes = read(client_fd, buf, BUFF_SIZE);
+	int read_bytes = read(*client_fd, buf, BUFF_SIZE);
 	printf("msg read - %s\n", buf);
 
 	// extracting method, url and protocol
