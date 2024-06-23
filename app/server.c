@@ -147,7 +147,7 @@ void *process_request(void *socket_fd)
 		}
 
 	}
-	if (strcmp(url, "/") == 0)
+	else if (strcmp(url, "/") == 0)
 	{
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
 	}
