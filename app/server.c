@@ -7,13 +7,18 @@
 #include <errno.h>
 #include <unistd.h>
 #include <pthread.h>	// for concurrent connections to server
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define BUFF_SIZE 1024
 
 // Function prototypes
 void *process_request(void *socket_fd);
 
-int main() {
+// global variable
+char directory[BUFF_SIZE] = ".";
+
+int main(int argc, char *argv[]) {
 	// Disable output buffering
 	setbuf(stdout, NULL);
  	setbuf(stderr, NULL);
@@ -21,6 +26,16 @@ int main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	printf("Logs from your program will appear here!\n");
 
+	
+
+	for (int i = 1; i < argc; i++)
+	{
+		if (strcmp(argv[i], "--directory") == 0)
+		{
+			strncpy(directory, argv[i + 1], sizeof(directory) - 1);
+			directory[sizeof(directory) - 1] = '\0';
+		}
+	}
 	// Uncomment this block to pass the first stage
 	
 	 int server_fd, client_addr_len;
@@ -83,74 +98,6 @@ int main() {
 		pthread_detach(thread_id);
 	 }
 	 
-	//
-	 
-
-     /*char buf[BUFF_SIZE];
-	 // reading the message
-	 int read_bytes = read(client_fd, buf, BUFF_SIZE);
-	 printf("msg read - %s\n", buf);
-
-	 char method[16], url[512], protocol[16];
-	 sscanf(buf, "%s %s %s", method, url, protocol);
-	 printf("URL %s", url);
-	// We take a string literal "HTTP/1.1 200 OK\r\n\r\n"
-	 char *reply = "HTTP/1.1 200 OK\r\n\r\n";
-	 char *replay_bad = "HTTP/1.1 404 Not Found\r\n\r\n";
-	 int bytes_sent;
-	 char response[BUFF_SIZE] = {0};
-	 if (strcmp(url, "/") == 0)
-	 {
-		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
-	 }
-	 else if (strncmp(url, "/echo/", 6) == 0)
-	 {
-		char *echo = url + 6;
-		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
-	 }
-	 else if (strncmp(url, "/user-agent", 11) == 0)
-	 {
-
-	 }
-	 else
-	 {
-		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0);
-	 }
-	 bytes_sent = send(client_fd, response, strlen(response), 0);
-	 // taking a char array to receive the GET request in
-	 /*char buffer[BUFF_SIZE]; //= {0};
-	 recv(client_fd, buffer, BUFF_SIZE, 0);
-	 char *token = strtok(buffer, " ");
-	 token = strtok(NULL, " ");
-	 printf("%s", token);
-	 char *reqpath = strdup(token);
-	 printf("req path - %s\n", reqpath);
-     char *main_path = strtok(reqpath, "/");
-	 char *content = strtok(NULL, "");
-     printf("main - %s", main_path);
-	 printf("content - %s", content);
-	 if (strcmp(reqpath, "/") == 0)
-	 {
-		bytes_sent = send(client_fd, reply, strlen(reply), 0);
-	 }
-	 if (strcmp(reqpath, "/echo") == 0)
-	 {
-		size_t length = strlen(content);
-		char response[512];
-		sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", length, content);
-		printf("%s", response);
-		bytes_sent = send(client_fd, response, strlen(response), 0);
-	 }
-	 if (strncmp(reqpath, "/user-agent", 11) == 0)
-	 {
-		char *s = reqpath + 11;
-		printf("Status - %s", s);
-	 }
-	 else
-	 {
-		bytes_sent = send(client_fd, replay_bad, strlen(replay_bad), 0);
-	 }*/
-	 //close(client_fd);
 	 close(server_fd);
 
 	return 0;
@@ -174,6 +121,31 @@ void *process_request(void *socket_fd)
 	if (strcmp(method, "GET") == 0)
 	{
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n200 OK");
+	}
+	if (strncmp(url, "/files/", 7) == 0)
+	{
+		// get file name
+		char *file_name = url + 7;
+		// full file path
+		char file_path[BUFF_SIZE];
+
+		snprintf(file_path, sizeof(file_path), "%s%s", directory, file_name);
+
+		FILE *fp = fopen(file_path, "r");
+		if (fp == NULL)
+		{
+			fprintf(stderr, "Error: Can not open %s\n", file_path);
+			snprintf(response, sizeof(response), "HTTP/1.1 404 Not Found\r\n\r\n\r\n");
+		}
+		else
+		{
+			char file_buffer[BUFF_SIZE];
+			int bytes_read = fread(file_buffer, 1, sizeof(file_buffer) - 1, fp);
+			file_buffer[bytes_read] = '\0';
+			fclose(fp);
+			snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %ld\r\n\r\n%s", strlen(file_buffer), file_buffer);
+		}
+
 	}
 	if (strcmp(url, "/") == 0)
 	{
