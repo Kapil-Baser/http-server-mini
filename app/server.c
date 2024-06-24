@@ -125,12 +125,13 @@ void *process_request(void *socket_fd)
 			char *file_name = url + 7;
 			printf("File name %s\n", file_name);
 			char file_path[BUFF_SIZE];
-			snprintf(file_path, sizeof(file_path), "%s%s.txt", directory, file_name);
+			snprintf(file_path, sizeof(file_path), "%s%s", directory, file_name);
 			printf("File path - %s\n", file_path);
 			char *cont_len = strstr(buf, "Content-Length:");
 			cont_len = cont_len + 16;
 			printf("Cont len - %s", cont_len);
 			int len = atoi(cont_len);
+			printf("len t - %d", len);
 			char *content_type = strstr(buf, "Content-Type:");
 			char *token = strtok(content_type, "\r\n");
 			token = strtok(NULL, "\r\n");
