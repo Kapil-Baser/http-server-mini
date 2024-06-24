@@ -123,11 +123,11 @@ void *process_request(void *socket_fd)
 		if (strncmp(url, "/files/", 7) == 0)
 		{
 			char *file_name = url + 7;
-
+			printf("File name %s\n", file_name);
 			char file_path[BUFF_SIZE];
 			snprintf(file_path, sizeof(file_path), "%s%s", directory, file_name);
 
-			char *content_len = strstr(buf, "Content-Length:");
+			char *content_len = strstr(buf, "Content-Type:");
 			char *token = strtok(content_len, "\r\n");
 			token = strtok(NULL, "\r\n");
 			printf("Contents - %s\n", token);
