@@ -139,11 +139,16 @@ void *process_request(void *socket_fd)
 
 			// writing the contents into file
 			FILE *fp = fopen(file_path, "wb");
-			if (fp == NULL)
+			if (fp != NULL)
 			{
-				printf("Error:\n");
+				if (fputs(token, fp) != EOF)
+				{
+					printf("Error: Writing data to file\n");
+				}
+				fclose(fp);
+				
 			}
-			fwrite(token, 1, sizeof(token) - 1, fp);
+			//fwrite(token, 1, sizeof(token) - 1, fp);
 
 			snprintf(response, sizeof(response), "HTTP/1.1 201 Created\r\n\r\n");
 		}
