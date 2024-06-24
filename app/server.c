@@ -134,10 +134,10 @@ void *process_request(void *socket_fd)
 			char *token = strtok(content_type, "\r\n");
 			token = strtok(NULL, "\r\n");
 			printf("Contents - %s\n", token);
-			
+
 			// writing the contents into file
-			//FILE *fp = fopen(file_path, "w");
-			//fwrite(token, 1, sizeof(token) - 1, fp);
+			FILE *fp = fopen(file_path, "w");
+			fwrite(token, 1, sizeof(token) - 1, fp);
 		}
 	}
 	if (strcmp(method, "GET") == 0)
