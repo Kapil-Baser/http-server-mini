@@ -146,62 +146,62 @@ void *process_request(void *socket_fd)
 	if (strcmp(method, "GET") == 0)
 	{
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n200 OK");
-	}
-	else if (strncmp(url, "/files/", 7) == 0)
-	{
-		// get file name
-		char *file_name = url + 7;
-		// full file path
-		char file_path[BUFF_SIZE];
-
-		snprintf(file_path, sizeof(file_path), "%s%s", directory, file_name);
-
-		FILE *fp = fopen(file_path, "r");
-		if (fp == NULL)
+	
+		if (strncmp(url, "/files/", 7) == 0)
 		{
-			fprintf(stderr, "Error: Can not open %s\n", file_path);
+			// get file name
+			char *file_name = url + 7;
+			// full file path
+			char file_path[BUFF_SIZE];
+
+			snprintf(file_path, sizeof(file_path), "%s%s", directory, file_name);
+
+			FILE *fp = fopen(file_path, "r");
+			if (fp == NULL)
+			{
+				fprintf(stderr, "Error: Can not open %s\n", file_path);
+				snprintf(response, sizeof(response), "HTTP/1.1 404 Not Found\r\n\r\n\r\n");
+			}
+			else
+			{
+				char file_buffer[BUFF_SIZE];
+				int bytes_read = fread(file_buffer, 1, sizeof(file_buffer) - 1, fp);
+				file_buffer[bytes_read] = '\0';
+				fclose(fp);
+				snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %ld\r\n\r\n%s", strlen(file_buffer), file_buffer);
+			}
+
+		}
+		else if (strcmp(url, "/") == 0)
+		{
+			snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
+		}
+		else if (strncmp(url, "/echo/", 6) == 0)
+		{
+			char *echo = url + 6;
+			snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
+		}
+		else if (strncmp(url, "/user-agent", 11) == 0)
+		{
+			char *user_agent = strstr(buf, "User-Agent:");
+			if (user_agent != NULL)
+			{
+				user_agent += 12;
+				char *eol = strstr(user_agent, "\r\n");
+				*eol = '\0';
+			}
+			else
+			{
+				user_agent = "User-agent not found";
+			}
+			// sending user agent
+			snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(user_agent), user_agent);
+		}
+		else
+		{
 			snprintf(response, sizeof(response), "HTTP/1.1 404 Not Found\r\n\r\n\r\n");
 		}
-		else
-		{
-			char file_buffer[BUFF_SIZE];
-			int bytes_read = fread(file_buffer, 1, sizeof(file_buffer) - 1, fp);
-			file_buffer[bytes_read] = '\0';
-			fclose(fp);
-			snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %ld\r\n\r\n%s", strlen(file_buffer), file_buffer);
-		}
-
 	}
-	else if (strcmp(url, "/") == 0)
-	{
-		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\n\r\n");
-	}
-	else if (strncmp(url, "/echo/", 6) == 0)
-	{
-		char *echo = url + 6;
-		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
-	}
-	else if (strncmp(url, "/user-agent", 11) == 0)
-	{
-		char *user_agent = strstr(buf, "User-Agent:");
-		if (user_agent != NULL)
-		{
-			user_agent += 12;
-			char *eol = strstr(user_agent, "\r\n");
-			*eol = '\0';
-		}
-		else
-		{
-			user_agent = "User-agent not found";
-		}
-		// sending user agent
-		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(user_agent), user_agent);
-	}
-	else
-	{
-		snprintf(response, sizeof(response), "HTTP/1.1 404 Not Found\r\n\r\n\r\n");
-	}
-
 	// sending the processed request
 	bytes_sent = send(*client_fd, response, strlen(response), 0);
 
