@@ -118,6 +118,21 @@ void *process_request(void *socket_fd)
 	printf("URL - %s\n", url);
 	int bytes_sent;
 	char response[BUFF_SIZE] = {0};
+	if (strcmp(method, "POST") == 0)
+	{
+		if (strncmp(url, "/files/", 7) == 0)
+		{
+			char *file_name = url + 7;
+
+			char file_path[BUFF_SIZE];
+			snprintf(file_path, sizeof(file_path), "%s%s", directory, file_name);
+
+			char *content_len = strstr(buf, "Content-Length:");
+			char *token = strtok(content_len, "\r\n");
+			token = strtok(NULL, "\r\n");
+			printf("Contents - %s\n", token);
+		}
+	}
 	if (strcmp(method, "GET") == 0)
 	{
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n200 OK");
