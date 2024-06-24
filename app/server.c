@@ -130,6 +130,7 @@ void *process_request(void *socket_fd)
 			char *cont_len = strstr(buf, "Content-Length:");
 			cont_len = cont_len + 16;
 			printf("Cont len - %s", cont_len);
+			int len = atoi(cont_len);
 			char *content_type = strstr(buf, "Content-Type:");
 			char *token = strtok(content_type, "\r\n");
 			token = strtok(NULL, "\r\n");
@@ -137,7 +138,7 @@ void *process_request(void *socket_fd)
 
 			// writing the contents into file
 			FILE *fp = fopen(file_path, "w");
-			fwrite(token, 1, sizeof(token) - 1, fp);
+			fwrite(token, len, 1, fp);
 		}
 	}
 	if (strcmp(method, "GET") == 0)
