@@ -139,13 +139,15 @@ void *process_request(void *socket_fd)
 			// writing the contents into file
 			FILE *fp = fopen(file_path, "wb");
 			fwrite(token, len, 1, fp);
+
+			snprintf(response, sizeof(response), "HTTP/1.1 201 Created\r\n\r\n");
 		}
 	}
 	if (strcmp(method, "GET") == 0)
 	{
 		snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n200 OK");
 	}
-	if (strncmp(url, "/files/", 7) == 0)
+	else if (strncmp(url, "/files/", 7) == 0)
 	{
 		// get file name
 		char *file_name = url + 7;
