@@ -122,21 +122,21 @@ void *process_request(void *socket_fd)
 	{
 		if (strncmp(url, "/files/", 7) == 0)
 		{
-			char *file_name = url + 7;
+			char *file_name = url;
 			printf("File name %s\n", file_name);
 			char file_path[BUFF_SIZE];
-			snprintf(file_path, sizeof(file_path), "%s%s.txt", directory, file_name);
-			printf("File path - %s\n", file_path);
+			//snprintf(file_path, sizeof(file_path), "%s%s.txt", directory, file_name);
+			//printf("File path - %s\n", file_path);
 			char *cont_len = strstr(buf, "Content-Length:");
-			cont_len = cont_len + 15;
+			cont_len = cont_len + 16;
 			printf("Cont len - %s", cont_len);
 			char *content_len = strstr(buf, "Content-Type:");
 			char *token = strtok(content_len, "\r\n");
 			token = strtok(NULL, "\r\n");
 			printf("Contents - %s\n", token);
 			// writing the contents into file
-			FILE *fp = fopen(file_path, "w");
-			fwrite(token, 1, sizeof(token) - 1, fp);
+			//FILE *fp = fopen(file_path, "w");
+			//fwrite(token, 1, sizeof(token) - 1, fp);
 		}
 	}
 	if (strcmp(method, "GET") == 0)
