@@ -143,7 +143,7 @@ void *process_request(void *socket_fd)
 			{
 				printf("Error:\n");
 			}
-			fwrite(token, len, 1, fp);
+			fwrite(token, 1, sizeof(token) - 1, fp);
 
 			snprintf(response, sizeof(response), "HTTP/1.1 201 Created\r\n\r\n");
 		}
