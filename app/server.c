@@ -185,7 +185,7 @@ void *process_request(void *socket_fd)
 		{
 			printf("Are we here\n");
 			char *echo = url + 6;
-			char *encoding = strstr(buf, "Content-Encoding:");
+			char *encoding = strstr(buf, "Accept-Encoding:");
 			printf("Encoding - %s\n", encoding);
 			if (encoding != NULL)
 			{
