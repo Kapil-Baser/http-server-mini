@@ -183,6 +183,7 @@ void *process_request(void *socket_fd)
 		}
 		else if (strncmp(url, "/echo/", 6) == 0)
 		{
+			printf("Are we here\n");
 			char *echo = url + 6;
 			char *encoding = strstr(buf, "Content-Encoding:");
 			if (encoding != NULL)
