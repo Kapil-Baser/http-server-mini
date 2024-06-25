@@ -184,9 +184,11 @@ void *process_request(void *socket_fd)
 		else if (strncmp(url, "/echo/", 6) == 0)
 		{
 			char *echo = url + 6;
-			char *encoding = strstr(buf, "Content-Encoding: gzip");
+			char *encoding = strstr(buf, "Content-Encoding:");
 			if (encoding != NULL)
 			{
+				encoding += 18;
+				printf("%s", encoding);
 				snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
 			}
 			else
