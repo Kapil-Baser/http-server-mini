@@ -122,16 +122,12 @@ void *process_request(void *socket_fd)
 	{
 		if (strncmp(url, "/files/", 7) == 0)
 		{
-			char *file_name = url + 7;
-			printf("File name %s\n", file_name);
+			// get the file name
+			char *file_name = url + 7;			
 			char file_path[BUFF_SIZE];
 			snprintf(file_path, sizeof(file_path), "%s%s", directory, file_name);
 			printf("File path - %s\n", file_path);
-			char *cont_len = strstr(buf, "Content-Length:");
-			cont_len = cont_len + 16;
-			printf("Cont len - %s", cont_len);
-			int len = atoi(cont_len);
-			printf("len t - %d", len);
+			// get the data that comes after content type
 			char *content_type = strstr(buf, "Content-Type:");
 			char *token = strtok(content_type, "\r\n");
 			token = strtok(NULL, "\r\n");
@@ -148,7 +144,6 @@ void *process_request(void *socket_fd)
 				fclose(fp);
 				
 			}
-			//fwrite(token, 1, sizeof(token) - 1, fp);
 
 			snprintf(response, sizeof(response), "HTTP/1.1 201 Created\r\n\r\n");
 		}
@@ -189,7 +184,15 @@ void *process_request(void *socket_fd)
 		else if (strncmp(url, "/echo/", 6) == 0)
 		{
 			char *echo = url + 6;
-			snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
+			char *encoding = strstr(buf, "Content-Encoding: gzip");
+			if (encoding != NULL)
+			{
+				snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
+			}
+			else
+			{
+				snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
+			}
 		}
 		else if (strncmp(url, "/user-agent", 11) == 0)
 		{
