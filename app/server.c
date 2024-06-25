@@ -184,7 +184,7 @@ void *process_request(void *socket_fd)
 		else if (strncmp(url, "/echo/", 6) == 0)
 		{
 			char *echo = url + 6;
-			char *encoding = strstr(buf, "Accept-Encoding: gzip");
+			char *encoding = strstr(buf, "gzip");
 			printf("Encoding - %s\n", encoding);
 			if (encoding != NULL)
 			{				
