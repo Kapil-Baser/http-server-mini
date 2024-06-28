@@ -194,8 +194,8 @@ void *process_request(void *socket_fd)
 				long unsigned int compressed_len;
 				compressed_buf = gzip_deflate(echo, strlen(echo), &compressed_len);	
 				snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %ld\r\n\r\n", compressed_len);
-				send(client_fd, response, strlen(response), 0);
-				send(client_fd, compressed_buf, compressed_len, 0);
+				send(*client_fd, response, strlen(response), 0);
+				send(*client_fd, compressed_buf, compressed_len, 0);
 				return NULL;
 			}
 			else
