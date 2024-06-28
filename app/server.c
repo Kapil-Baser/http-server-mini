@@ -9,11 +9,13 @@
 #include <pthread.h>	// for concurrent connections to server
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <zlib.h>
 
 #define BUFF_SIZE 1024
 
 // Function prototypes
 void *process_request(void *socket_fd);
+static char *gzip_deflate(char *data, size_t data_len, size_t *gzip_len);
 
 // global variable
 char directory[BUFF_SIZE] = ".";
@@ -187,8 +189,14 @@ void *process_request(void *socket_fd)
 			char *encoding = strstr(buf, "gzip");
 			printf("Encoding - %s\n", encoding);
 			if (encoding != NULL)
-			{				
-				snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %u\r\n\r\n%s", strlen(echo), echo);
+			{			
+				char *compressed_buf = NULL;
+				long unsigned int compressed_len;
+				compressed_buf = gzip_deflate(echo, strlen(echo), &compressed_len);	
+				snprintf(response, sizeof(response), "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %ld\r\n\r\n", compressed_len);
+				send(client_fd, response, strlen(response), 0);
+				send(client_fd, compressed_buf, compressed_len, 0);
+				return NULL;
 			}
 			else
 			{
@@ -221,4 +229,21 @@ void *process_request(void *socket_fd)
 
 	close(*client_fd);
 	return NULL;
+}
+
+static char *gzip_deflate(char *data, size_t data_len, size_t *gzip_len)
+{
+	z_stream stream = {0};
+	deflateInit2(&stream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 0x1f, 8, Z_DEFAULT_STRATEGY);
+	size_t max_len = deflateBound(&stream, data_len);
+	char *gzip_data = malloc(max_len);
+	memset(gzip_data, 0, max_len);
+	stream.next_in = (Bytef *)data;
+	stream.avail_in = data_len;
+	stream.next_out = (Bytef *)gzip_data;
+	stream.avail_out = max_len;
+	deflate(&stream, Z_FINISH);
+	*gzip_len = stream.total_out;
+	deflateEnd(&stream);
+	return gzip_data;
 }
